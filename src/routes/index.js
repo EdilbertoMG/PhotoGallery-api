@@ -17,6 +17,18 @@ router.get('/photos', async (req, res) => {
     res.json(photos);
 });
 
+router.get('/photos/:title', async (req, res) => {
+    const { title } = req.params;
+    const photos = await Photo.find({title});
+    res.json(photos);
+});
+
+router.get('/photos/:created_at', async (req, res) => {
+    const { created_at } = req.params;
+    const photos = await Photo.find({created_at: created_at.ISODate("YYYY-mm-ddTHH:MM:ssZ")});
+    res.json(photos);
+});
+
 router.get('/photos/:photo_id', async (req, res) => {
     const { photo_id } = req.params;
     const photo = await Photo.findById(photo_id);
@@ -28,7 +40,7 @@ router.post('/photos', async (req, res) => {
     // Saving Image in Cloudinary
     try {
         const result = await cloudinary.v2.uploader.upload(req.file.path);
-        const newPhoto = new Photo({title, description, imageURL: result.url, public_id: result.public_id, created_at: result.created_at});
+        const newPhoto = new Photo({title, description, imageURL: result.url, public_id: result.public_id});
         const resp = await  newPhoto.save();
         await fs.unlink(req.file.path);
     } catch (e) {
@@ -37,7 +49,7 @@ router.post('/photos', async (req, res) => {
     res.send({ message: "created!" });
 });
 
-router.get('/photos/delete/:photo_id', async (req, res) => {
+router.delete('/photos/delete/:photo_id', async (req, res) => {
     const { photo_id } = req.params;
     const photo = await Photo.findByIdAndRemove(photo_id);
     const result = await cloudinary.v2.uploader.destroy(photo.public_id);
@@ -50,15 +62,29 @@ router.get('/albums', async (req, res) => {
     res.json(album);
 });
 
-router.post('/album/add', async (req, res) => {
+router.post('/albums', async (req, res) => {
     const { title, description } = req.body;
-    // Saving Image in Cloudinary
+    
     try {
-        const newAlbum = new Album({title, description, imageURL: result.url, public_id: result.public_id});
+        const newAlbum = new Album({title, description});
         await newAlbum.save();
     } catch (e) {
         console.log(e)
     }
-    //res.redirect('/');
+    res.send({ message: "created!" });
 });
+
+router.get('/albums/:album_id', async (req, res) => {
+    const { album_id } = req.params;
+    const album = await Album.findById(album_id);
+    res.json(album);
+});
+
+router.delete('/albums/delete/:album_id', async (req, res) => {
+    const { album_id } = req.params;
+    const photo = await Album.findByIdAndRemove(album_id);
+
+    res.send({ message: "album remove" });
+});
+
 module.exports = router;

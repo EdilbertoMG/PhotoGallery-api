@@ -1,6 +1,6 @@
 # Installation
 
-_navigate to the project folder
+_navigate to the project folder_
 
 install dependencies: 
 ```node
@@ -16,5 +16,9 @@ CLOUDINARY_API_SECRET=
 ```
 start with 
 ```
-npm start or npm run dev
+npm start
+```
+or
+```
+npm run dev
 ```

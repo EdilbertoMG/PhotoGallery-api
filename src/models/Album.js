@@ -11,13 +11,6 @@ const Album = new Schema({
     created_at: {
         type: Date,
         default: new Date()
-    },
-    photo_public_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'Photo'
-    },
-    photo_imageURL: {
-        type: String,
     }
 });
 

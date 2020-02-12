@@ -22,7 +22,8 @@ const Photo = new Schema({
         required: [ false, 'The id_album is required' ]
     },
     created_at: {
-        type: Date
+        type: Date,
+        default: new Date()
     }
 });
 
