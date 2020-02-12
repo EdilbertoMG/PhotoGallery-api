@@ -17,8 +17,14 @@ router.get('/photos', async (req, res) => {
     res.json(photos);
 });
 
+router.get('/photos/:photo_id', async (req, res) => {
+    const { photo_id } = req.params;
+    const photo = await Photo.findById(photo_id);
+    res.json(photo);
+});
+
 router.post('/photos', async (req, res) => {
-    const { title, description, id_album} = req.body;
+    const { title, description} = req.body;
     // Saving Image in Cloudinary
     try {
         const result = await cloudinary.v2.uploader.upload(req.file.path);
@@ -36,7 +42,7 @@ router.get('/photos/delete/:photo_id', async (req, res) => {
     const photo = await Photo.findByIdAndRemove(photo_id);
     const result = await cloudinary.v2.uploader.destroy(photo.public_id);
     
-    //res.redirect('/images/add');
+    res.send({ message: "photo delete!" });
 });
 
 router.get('/albums', async (req, res) => {
