@@ -289,6 +289,50 @@ router.get('/api/albums/:id', (req, res) => {
     });
 });
 
+router.put('/api/albums',(req,res)=>{
+    const {
+        id,
+        id_photo,
+    } = req.body;
+    
+    var query =  {"$push":{"photos": {id_photo}}}
+    
+    Photo.findOneAndUpdate({_id:id},query,(err,palbumsUpdated)=>{
+        if(err || !palbumsUpdated){
+            res.status(404).json({
+                status:"Error",
+                message:"Couldn't update album"
+            });
+        }
+        res.status(200).json({
+            status:"OK",
+            message:"Updated album"
+        });
+    });
+});
+
+router.put('/api/albums/remove',(req,res)=>{
+    const {
+        id,
+        id_album
+    } = req.body;
+    
+    var query =  {"$unset":{"id_album": id_album}}
+    
+    Photo.findOneAndUpdate({_id:id},query,(err,photosUpdated)=>{
+        if(err || !photosUpdated){
+            res.status(404).json({
+                status:"Error",
+                message:"Couldn't update album"
+            });
+        }
+        res.status(200).json({
+            status:"OK",
+            message:"Updated album"
+        });
+    });
+});
+
 router.delete('/api/albums/delete/:id', (req, res) => {
     const {
         id

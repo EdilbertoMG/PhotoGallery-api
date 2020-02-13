@@ -22,7 +22,6 @@ const Photo = new Schema({
     id_album: {
         type: Schema.Types.ObjectId,
         ref: 'Album',
-        required: [false, 'The id_album is required']
     },
     created_at: {
         type: Date,
