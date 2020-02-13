@@ -143,6 +143,50 @@ router.post('/api/photos', (req, res) => {
     });
 });
 
+router.put('/api/photos',(req,res)=>{
+    const {
+        id,
+        id_album
+    } = req.body;
+    
+    var query =  {"$set":{"id_album":  id_album}}
+    
+    Photo.findOneAndUpdate({_id:id},query,(err,photosUpdated)=>{
+        if(err || !photosUpdated){
+            res.status(404).json({
+                status:"Error",
+                message:"Couldn't update photo"
+            });
+        }
+        res.status(200).json({
+            status:"OK",
+            message:"Updated photo"
+        });
+    });
+});
+
+router.put('/api/photos/remove',(req,res)=>{
+    const {
+        id,
+        id_album
+    } = req.body;
+    
+    var query =  {"$unset":{"id_album": id_album}}
+    
+    Photo.findOneAndUpdate({_id:id},query,(err,photosUpdated)=>{
+        if(err || !photosUpdated){
+            res.status(404).json({
+                status:"Error",
+                message:"Couldn't update photo"
+            });
+        }
+        res.status(200).json({
+            status:"OK",
+            message:"Updated photo"
+        });
+    });
+});
+
 router.delete('/api/photos/delete/:id', (req, res) => {
     const {
         id
