@@ -13,10 +13,14 @@ app.set('port', process.env.PORT || 3000);
 // Middlewares
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({
+    extended: false
+}));
 const storage = multer.diskStorage({
     destination: path.join(__dirname, 'public/uploads'),
-    limits: {fileSize: 2000000},
+    limits: {
+        fileSize: 2000000
+    },
     filename: (req, file, cb) => {
         cb(null, new Date().getTime() + path.extname(file.originalname));
     },
@@ -24,7 +28,9 @@ const storage = multer.diskStorage({
         filetypes = /jpeg|jpg|png|gif/
     }
 });
-app.use(multer({storage}).single('image'));
+app.use(multer({
+    storage
+}).single('image'));
 
 // Routes
 app.use(require('./routes'));

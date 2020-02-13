@@ -1,12 +1,15 @@
-const { Schema, model } = require('mongoose');
+const {
+    Schema,
+    model
+} = require('mongoose');
 
 const Album = new Schema({
     title: {
         type: String,
-        required: [ true, 'The name field is required' ]
+        required: [true, 'The name field is required']
     },
     description: {
-        type :String
+        type: String
     },
     created_at: {
         type: Date,
