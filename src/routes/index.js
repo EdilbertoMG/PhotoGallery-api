@@ -84,24 +84,47 @@ router.get('/api/photos/:title', (req, res) => {
     });
 });
 
-router.get('/api/photos/:created_at', async (req, res) => {
+/* router.get('/api/photos/:created_at', async (req, res) => {
     const { created_at } = req.params;
     const photos = await Photo.find({});
     res.json(photos);
-});
+}); */
 
-router.post('/api/photos', async (req, res) => {
+router.post('/api/photos', (req, res) => {
     const { title, description} = req.body;
     // Saving Image in Cloudinary
-    try {
-        const result = await cloudinary.v2.uploader.upload(req.file.path);
-        const newPhoto = new Photo({title, description, imageURL: result.url, public_id: result.public_id});
-        const resp = await  newPhoto.save();
-        await fs.unlink(req.file.path);
-    } catch (e) {
-        console.log(e)
-    }
-    res.send({ message: "created!" });
+    
+        cloudinary.v2.uploader.upload(req.file.path,(err,result) => {
+            if(err || !result){
+                res.status(404).json({
+                    status:"Error",
+                    message:"Couldn't save photo in cloudinary"
+                });
+            }
+
+            if (result) {
+                const newPhoto = new Photo({title, description, imageURL: result.url, public_id: result.public_id});
+                newPhoto.save((err,photoStored)=>{
+
+            if(err || !photoStored){
+                res.status(404).json({
+                    status:"Error",
+                    message:"No se pudo guardar los datos"
+                });
+            }
+            
+            if (photoStored) {
+                fs.unlink(req.file.path);
+            }
+
+            res.status(200).json({
+                status:"OK",
+                message:"Datos Guardados"
+            });
+    
+        });;
+            }
+        });
 });
 
 router.delete('/api/photos/delete/:id',(req, res) => {

@@ -1,7 +1,7 @@
 {
   "name": "photogallerybackend",
   "version": "1.0.0",
-  "description": "",
+  "description": "_navigate to the project folder_",
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/",
@@ -22,5 +22,13 @@
   },
   "devDependencies": {
     "nodemon": "^1.18.9"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EdilbertoMG/PhotoGalleryBackend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/EdilbertoMG/PhotoGalleryBackend/issues"
+  },
+  "homepage": "https://github.com/EdilbertoMG/PhotoGalleryBackend#readme"
 }
