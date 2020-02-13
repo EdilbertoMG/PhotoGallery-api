@@ -205,7 +205,7 @@ router.post('/api/albums', (req, res) => {
         if (err || !albumsStored) {
             res.status(404).json({
                 status: "Error",
-                message: "Couldn't save photo"
+                message: "Couldn't save album"
             });
         }
 
