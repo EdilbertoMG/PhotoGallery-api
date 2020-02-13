@@ -109,7 +109,7 @@ router.post('/api/photos', (req, res) => {
             if(err || !photoStored){
                 res.status(404).json({
                     status:"Error",
-                    message:"No se pudo guardar los datos"
+                    message:"Couldn't save photo"
                 });
             }
             
@@ -119,7 +119,7 @@ router.post('/api/photos', (req, res) => {
 
             res.status(200).json({
                 status:"OK",
-                message:"Datos Guardados"
+                message:"Saved photo"
             });
     
         });;
