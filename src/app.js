@@ -16,8 +16,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 const storage = multer.diskStorage({
     destination: path.join(__dirname, 'public/uploads'),
+    limits: {fileSize: 2000000},
     filename: (req, file, cb) => {
         cb(null, new Date().getTime() + path.extname(file.originalname));
+    },
+    fileFilter: (req, file, cb) => {
+        filetypes = /jpeg|jpg|png|gif/
     }
 });
 app.use(multer({storage}).single('image'));

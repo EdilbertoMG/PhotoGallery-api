@@ -12,30 +12,85 @@ const Photo = require('../models/Photo');
 const Album = require('../models/Album');
 const fs = require('fs-extra');
 
-router.get('/photos', async (req, res) => {
-    const photos = await Photo.find();
-    res.json(photos);
+router.get('/api/photos',(req, res) => {
+    Photo.find({}).exec((err,photos)=>{
+        if(err){
+            res.status(500).json({
+                status:"Error",
+                message:"There was an error"
+            });
+        }
+
+        if(!photos){
+            res.status(404).json({
+                status:"Error",
+                message:"There are no pictures"
+            });
+        }
+
+        res.status(200).json({
+            status:"OK",
+            photos
+        });
+    });
 });
 
-router.get('/photos/:title', async (req, res) => {
+router.get('/api/photos/:id', (req, res) => {
+    const { id } = req.params;
+    Photo.findById({_id:id},(err,photos)=>{
+        if(err){
+            res.status(500).json({
+                status:"Error",
+                message:"There was an error"
+            });
+        }
+
+        if(!photos){
+            res.status(404).json({
+                status:"Error",
+                message:"There are no pictures"
+            });
+        }
+
+        res.status(200).json({
+            status:"OK",
+            photos
+        });
+    });
+    
+});
+
+router.get('/api/photos/:title', (req, res) => {
     const { title } = req.params;
-    const photos = await Photo.find({title});
-    res.json(photos);
+    Photo.find({title}).exec((err,photos)=>{
+        if(err){
+            res.status(500).json({
+                status:"Error",
+                message:"There was an error"
+            });
+        }
+
+        if(!photos){
+            res.status(404).json({
+                status:"Error",
+                message:"There are no pictures"
+            });
+        }
+
+        res.status(200).json({
+            status:"OK",
+            photos
+        });
+    });
 });
 
-router.get('/photos/:created_at', async (req, res) => {
+router.get('/api/photos/:created_at', async (req, res) => {
     const { created_at } = req.params;
-    const photos = await Photo.find({created_at: created_at.ISODate("YYYY-mm-ddTHH:MM:ssZ")});
+    const photos = await Photo.find({});
     res.json(photos);
 });
 
-router.get('/photos/:photo_id', async (req, res) => {
-    const { photo_id } = req.params;
-    const photo = await Photo.findById(photo_id);
-    res.json(photo);
-});
-
-router.post('/photos', async (req, res) => {
+router.post('/api/photos', async (req, res) => {
     const { title, description} = req.body;
     // Saving Image in Cloudinary
     try {
@@ -49,20 +104,31 @@ router.post('/photos', async (req, res) => {
     res.send({ message: "created!" });
 });
 
-router.delete('/photos/delete/:photo_id', async (req, res) => {
-    const { photo_id } = req.params;
-    const photo = await Photo.findByIdAndRemove(photo_id);
-    const result = await cloudinary.v2.uploader.destroy(photo.public_id);
-    
-    res.send({ message: "photo delete!" });
+router.delete('/api/photos/delete/:id',(req, res) => {
+    const {id} = req.params;
+    Photo.findOneAndDelete({_id:id},(err,photoDelete)=>{
+        if(err || !photoDelete){
+            res.status(404).json({
+                status:"Error",
+                message:"Couldn't delete photo"
+            });
+        }
+        if (photoDelete) {
+            cloudinary.v2.uploader.destroy(photoDelete.public_id);
+        }
+        res.status(200).json({
+            status:"OK",
+            message:"Photo deleted"
+        });
+    });
 });
 
-router.get('/albums', async (req, res) => {
+router.get('/api/albums', async (req, res) => {
     const album = await Album.find();
     res.json(album);
 });
 
-router.post('/albums', async (req, res) => {
+router.post('/api/albums', async (req, res) => {
     const { title, description } = req.body;
     
     try {
@@ -74,13 +140,13 @@ router.post('/albums', async (req, res) => {
     res.send({ message: "created!" });
 });
 
-router.get('/albums/:album_id', async (req, res) => {
+router.get('/api/albums/:album_id', async (req, res) => {
     const { album_id } = req.params;
     const album = await Album.findById(album_id);
     res.json(album);
 });
 
-router.delete('/albums/delete/:album_id', async (req, res) => {
+router.delete('/api/albums/delete/:album_id', async (req, res) => {
     const { album_id } = req.params;
     const photo = await Album.findByIdAndRemove(album_id);
 
