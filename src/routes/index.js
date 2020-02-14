@@ -17,20 +17,18 @@ const fs = require('fs-extra');
 router.get('/api/photos', (req, res) => {
     Photo.find({}).exec((err, photos) => {
         if (err) {
-            res.status(500).json({
+            return res.status(500).json({
                 status: "Error",
                 message: "There was an error"
             });
         }
-
         if (!photos) {
-            res.status(404).json({
+            return res.status(404).json({
                 status: "Error",
                 message: "There are no pictures"
             });
         }
-
-        res.status(200).json({
+        return res.status(200).json({
             status: "OK",
             photos
         });
@@ -41,27 +39,26 @@ router.get('/api/photos/:id', (req, res) => {
     const {
         id
     } = req.params;
+    
     Photo.findById({
         _id: id
     }, (err, photos) => {
         if (err) {
-            res.status(500).json({
+            return res.status(500).json({
                 status: "Error",
                 message: "There was an error"
             });
         }
-
         if (!photos) {
-            res.status(404).json({
+            return res.status(404).json({
                 status: "Error",
                 message: "There are no pictures"
             });
         }
-
-        res.status(200).json({
-            status: "OK",
-            photos
-        });
+            return res.status(200).json({
+                status: "OK",
+                photos
+            }); 
     });
 });
 
@@ -73,20 +70,18 @@ router.get('/api/photos/:title', (req, res) => {
         title
     }).exec((err, photos) => {
         if (err) {
-            res.status(500).json({
+            return res.status(500).json({
                 status: "Error",
                 message: "There was an error"
             });
         }
-
         if (!photos) {
-            res.status(404).json({
+            return res.status(404).json({
                 status: "Error",
                 message: "There are no pictures"
             });
         }
-
-        res.status(200).json({
+        return res.status(200).json({
             status: "OK",
             photos
         });
@@ -107,12 +102,11 @@ router.post('/api/photos', (req, res) => {
     // Saving Image in Cloudinary
     cloudinary.v2.uploader.upload(req.file.path, (err, result) => {
         if (err || !result) {
-            res.status(404).json({
+            return res.status(404).json({
                 status: "Error",
                 message: "Couldn't save photo in cloudinary"
             });
         }
-
         if (result) {
             const newPhoto = new Photo({
                 title,
@@ -123,21 +117,19 @@ router.post('/api/photos', (req, res) => {
             newPhoto.save((err, photoStored) => {
 
                 if (err || !photoStored) {
-                    res.status(404).json({
+                    return res.status(404).json({
                         status: "Error",
                         message: "Couldn't save photo"
                     });
                 }
-
                 if (photoStored) {
                     fs.unlink(req.file.path);
+
+                    return res.status(200).json({
+                        status: "OK",
+                        message: "Saved photo"
+                    });
                 }
-
-                res.status(200).json({
-                    status: "OK",
-                    message: "Saved photo"
-                });
-
             });;
         }
     });
@@ -153,12 +145,12 @@ router.put('/api/photos',(req,res)=>{
     
     Photo.findOneAndUpdate({_id:id},query,(err,photosUpdated)=>{
         if(err || !photosUpdated){
-            res.status(404).json({
+            return res.status(404).json({
                 status:"Error",
                 message:"Couldn't update photo"
             });
         }
-        res.status(200).json({
+        return res.status(200).json({
             status:"OK",
             message:"Updated photo"
         });
@@ -175,12 +167,12 @@ router.put('/api/photos/remove',(req,res)=>{
     
     Photo.findOneAndUpdate({_id:id},query,(err,photosUpdated)=>{
         if(err || !photosUpdated){
-            res.status(404).json({
+            return res.status(404).json({
                 status:"Error",
                 message:"Couldn't update photo"
             });
         }
-        res.status(200).json({
+        return res.status(200).json({
             status:"OK",
             message:"Updated photo"
         });
@@ -195,7 +187,7 @@ router.delete('/api/photos/delete/:id', (req, res) => {
         _id: id
     }, (err, photoDelete) => {
         if (err || !photoDelete) {
-            res.status(404).json({
+            return res.status(404).json({
                 status: "Error",
                 message: "Couldn't delete photo"
             });
@@ -203,7 +195,7 @@ router.delete('/api/photos/delete/:id', (req, res) => {
         if (photoDelete) {
             cloudinary.v2.uploader.destroy(photoDelete.public_id);
         }
-        res.status(200).json({
+        return res.status(200).json({
             status: "OK",
             message: "Photo deleted"
         });
@@ -213,20 +205,20 @@ router.delete('/api/photos/delete/:id', (req, res) => {
 router.get('/api/albums', (req, res) => {
     Album.find({}).exec((err, album) => {
         if (err) {
-            res.status(500).json({
+            return res.status(500).json({
                 status: "Error",
                 message: "There was an error"
             });
         }
 
         if (!album) {
-            res.status(404).json({
+            return res.status(404).json({
                 status: "Error",
                 message: "There are no albums"
             });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             status: "OK",
             album
         });
@@ -241,20 +233,20 @@ router.get('/api/albums/:id', (req, res) => {
         _id: id
     }, (err, albums) => {
         if (err) {
-            res.status(500).json({
+            return res.status(500).json({
                 status: "Error",
                 message: "There was an error"
             });
         }
 
         if (!albums) {
-            res.status(404).json({
+            return res.status(404).json({
                 status: "Error",
                 message: "There are no albums"
             });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             status: "OK",
             albums
         });
@@ -275,13 +267,13 @@ router.post('/api/albums', (req, res) => {
     newAlbum.save((err, albumsStored) => {
 
         if (err || !albumsStored) {
-            res.status(404).json({
+            return res.status(404).json({
                 status: "Error",
                 message: "Couldn't save album"
             });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             status: "OK",
             message: "Saved album"
         });
@@ -299,12 +291,12 @@ router.put('/api/albums',(req,res)=>{
     
     Photo.findOneAndUpdate({_id:id},query,(err,palbumsUpdated)=>{
         if(err || !palbumsUpdated){
-            res.status(404).json({
+            return res.status(404).json({
                 status:"Error",
                 message:"Couldn't update album"
             });
         }
-        res.status(200).json({
+        return res.status(200).json({
             status:"OK",
             message:"Updated album"
         });
@@ -319,7 +311,7 @@ router.delete('/api/albums/delete/:id', (req, res) => {
         _id: id
     }, (err, albumDelete) => {
         if (err || !albumDelete) {
-            res.status(404).json({
+            return res.status(404).json({
                 status: "Error",
                 message: "Couldn't delete album"
             });
@@ -330,7 +322,7 @@ router.delete('/api/albums/delete/:id', (req, res) => {
             var query =  {"$unset":{"id_album": id}}
                 Photo.findOneAndUpdate({"id_album": id},query,(err,photoUp) =>{
                     if(err || !photoUp){
-                        res.status(404).json({
+                        return res.status(404).json({
                             status:"Error",
                             message:"Couldn't update photo"
                         });
@@ -338,7 +330,7 @@ router.delete('/api/albums/delete/:id', (req, res) => {
                 });
         });
         }
-        res.status(200).json({
+        return res.status(200).json({
             status: "OK",
             message: "Album deleted"
         });
