@@ -68,7 +68,7 @@ router.get('/api/photos/:title', (req, res) => {
     } = req.params;
     Photo.find({
         title
-    }).exec((err, photos) => {
+    }, (err, photos) => {
         if (err) {
             return res.status(500).json({
                 status: "Error",
