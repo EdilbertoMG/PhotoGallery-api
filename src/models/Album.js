@@ -3,10 +3,6 @@ const {
     model
 } = require('mongoose');
 
-const mongoose = require('mongoose');
-
-const Photo = mongoose.model('Photo');
-
 const Album = new Schema({
     title: {
         type: String,
@@ -15,7 +11,6 @@ const Album = new Schema({
     description: {
         type: String
     },
-    photos:[],
     created_at: {
         type: Date,
         default: new Date()

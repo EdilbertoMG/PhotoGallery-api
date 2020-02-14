@@ -3,6 +3,7 @@ const {
     model
 } = require('mongoose');
 
+
 const Photo = new Schema({
     title: {
         type: String,
@@ -20,8 +21,7 @@ const Photo = new Schema({
         required: [true, 'The public_id field is required']
     },
     id_album: {
-        type: Schema.Types.ObjectId,
-        ref: 'Album',
+        type: String,
     },
     created_at: {
         type: Date,

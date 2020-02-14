@@ -233,34 +233,6 @@ router.get('/api/albums', (req, res) => {
     });
 });
 
-router.post('/api/albums', (req, res) => {
-    const {
-        title,
-        description
-    } = req.body;
-
-    const newAlbum = new Album({
-        title,
-        description
-    });
-
-    newAlbum.save((err, albumsStored) => {
-
-        if (err || !albumsStored) {
-            res.status(404).json({
-                status: "Error",
-                message: "Couldn't save album"
-            });
-        }
-
-        res.status(200).json({
-            status: "OK",
-            message: "Saved album"
-        });
-
-    });
-});
-
 router.get('/api/albums/:id', (req, res) => {
     const {
         id
@@ -289,6 +261,34 @@ router.get('/api/albums/:id', (req, res) => {
     });
 });
 
+router.post('/api/albums', (req, res) => {
+    const {
+        title,
+        description
+    } = req.body;
+
+    const newAlbum = new Album({
+        title,
+        description
+    });
+
+    newAlbum.save((err, albumsStored) => {
+
+        if (err || !albumsStored) {
+            res.status(404).json({
+                status: "Error",
+                message: "Couldn't save album"
+            });
+        }
+
+        res.status(200).json({
+            status: "OK",
+            message: "Saved album"
+        });
+
+    });
+});
+
 router.put('/api/albums',(req,res)=>{
     const {
         id,
@@ -311,40 +311,32 @@ router.put('/api/albums',(req,res)=>{
     });
 });
 
-router.put('/api/albums/remove',(req,res)=>{
-    const {
-        id,
-        id_album
-    } = req.body;
-    
-    var query =  {"$unset":{"id_album": id_album}}
-    
-    Photo.findOneAndUpdate({_id:id},query,(err,photosUpdated)=>{
-        if(err || !photosUpdated){
-            res.status(404).json({
-                status:"Error",
-                message:"Couldn't update album"
-            });
-        }
-        res.status(200).json({
-            status:"OK",
-            message:"Updated album"
-        });
-    });
-});
-
 router.delete('/api/albums/delete/:id', (req, res) => {
     const {
         id
     } = req.params;
     Album.findOneAndDelete({
         _id: id
-    }, (err, albumsDelete) => {
-        if (err || !albumsDelete) {
+    }, (err, albumDelete) => {
+        if (err || !albumDelete) {
             res.status(404).json({
                 status: "Error",
                 message: "Couldn't delete album"
             });
+        }
+        if (albumDelete) {
+            Photo.find({"id_album": id}).stream()
+            .on ("data", function (doc){
+            var query =  {"$unset":{"id_album": id}}
+                Photo.findOneAndUpdate({"id_album": id},query,(err,photoUp) =>{
+                    if(err || !photoUp){
+                        res.status(404).json({
+                            status:"Error",
+                            message:"Couldn't update photo"
+                        });
+                    }
+                });
+        });
         }
         res.status(200).json({
             status: "OK",
@@ -352,5 +344,4 @@ router.delete('/api/albums/delete/:id', (req, res) => {
         });
     });
 });
-
 module.exports = router;
