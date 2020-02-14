@@ -344,4 +344,9 @@ router.delete('/api/albums/delete/:id', (req, res) => {
         });
     });
 });
+
+router.get('/*', (req, res) => {
+    res.redirect('/api/photos');
+});
+
 module.exports = router;
