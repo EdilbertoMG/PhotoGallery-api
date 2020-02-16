@@ -83,7 +83,6 @@ router.get('/api/photosInAlbums/:id', (req, res) => {
             });
         }
             return res.status(200).json({
-                status: "OK",
                 photos
             }); 
     });
