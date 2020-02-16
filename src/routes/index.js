@@ -62,6 +62,33 @@ router.get('/api/photos/:id', (req, res) => {
     });
 });
 
+router.get('/api/photosInAlbums/:id', (req, res) => {
+    const {
+        id
+    } = req.params;
+    
+    Photo.find({
+        id_album: id
+    }, (err, photos) => {
+        if (err) {
+            return res.status(500).json({
+                status: "Error",
+                message: "There was an error"
+            });
+        }
+        if (!photos) {
+            return res.status(404).json({
+                status: "Error",
+                message: "There are no pictures"
+            });
+        }
+            return res.status(200).json({
+                status: "OK",
+                photos
+            }); 
+    });
+});
+
 router.get('/api/photos/:title', (req, res) => {
     const {
         title
