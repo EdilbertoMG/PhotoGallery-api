@@ -88,12 +88,12 @@ router.get('/api/photosInAlbums/:id', (req, res) => {
     });
 });
 
-router.get('/api/photos/:title', (req, res) => {
+router.get('/api/photos/search/:title', (req, res) => {
     const {
-        title
+        title:title
     } = req.params;
     Photo.find({
-        title
+        title:title
     }, (err, photos) => {
         if (err) {
             return res.status(500).json({
@@ -108,8 +108,7 @@ router.get('/api/photos/:title', (req, res) => {
             });
         }
         return res.status(200).json({
-            status: "OK",
-            photos
+            photos,
         });
     });
 });
