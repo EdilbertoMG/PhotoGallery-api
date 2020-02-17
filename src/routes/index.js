@@ -160,6 +160,49 @@ router.post('/api/photos', (req, res) => {
     });
 });
 
+router.post('/api/photosInAlbum', (req, res) => {
+    const {
+        title,
+        description,
+        id_album
+    } = req.body;
+    // Saving Image in Cloudinary
+    cloudinary.v2.uploader.upload(req.file.path, (err, result) => {
+        if (err || !result) {
+            return res.status(404).json({
+                status: "Error",
+                message: "Couldn't save photo in cloudinary"
+            });
+        }
+        if (result) {
+            const newPhoto = new Photo({
+                title,
+                description,
+                imageURL: result.url,
+                public_id: result.public_id,
+                id_album
+            });
+            newPhoto.save((err, photoStored) => {
+
+                if (err || !photoStored) {
+                    return res.status(404).json({
+                        status: "Error",
+                        message: "Couldn't save photo"
+                    });
+                }
+                if (photoStored) {
+                    fs.unlink(req.file.path);
+
+                    return res.status(200).json({
+                        status: "OK",
+                        message: "Saved photo"
+                    });
+                }
+            });;
+        }
+    });
+});
+
 router.put('/api/photos',(req,res)=>{
     const {
         id,
