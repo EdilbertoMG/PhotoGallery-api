@@ -15,7 +15,7 @@ const Album = require('../models/Album');
 const fs = require('fs-extra');
 
 router.get('/api/photos', (req, res) => {
-    Photo.find({}).exec((err, photos) => {
+    Photo.find({}).sort({created_at: -1}).exec((err, photos) => {
         if (err) {
             return res.status(500).json({
                 status: "Error",
@@ -85,7 +85,7 @@ router.get('/api/photosInAlbums/:id', (req, res) => {
             return res.status(200).json({
                 photos
             }); 
-    });
+    }).sort({created_at: -1});
 });
 
 router.get('/api/photos/search/:title', (req, res) => {
@@ -110,7 +110,7 @@ router.get('/api/photos/search/:title', (req, res) => {
         return res.status(200).json({
             photos,
         });
-    });
+    }).sort({created_at: -1});
 });
 
 /* router.get('/api/photos/:created_at', async (req, res) => {
@@ -271,7 +271,7 @@ router.delete('/api/photos/delete/:id', (req, res) => {
 });
 
 router.get('/api/albums', (req, res) => {
-    Album.find({}).exec((err, album) => {
+    Album.find({}).sort({created_at: -1}).exec((err, album) => {
         if (err) {
             return res.status(500).json({
                 status: "Error",
