@@ -92,8 +92,9 @@ router.get('/api/photos/search/:title', (req, res) => {
     const {
         title:title
     } = req.params;
+
     Photo.find({
-        title:title
+        title: {'$regex': title}
     }, (err, photos) => {
         if (err) {
             return res.status(500).json({
@@ -104,11 +105,11 @@ router.get('/api/photos/search/:title', (req, res) => {
         if (!photos) {
             return res.status(404).json({
                 status: "Error",
-                message: "There are no pictures"
+                message: "There are no data"
             });
         }
         return res.status(200).json({
-            photos,
+            photos
         });
     }).sort({created_at: -1});
 });
