@@ -24,7 +24,7 @@ app.use(cors());
 const storage = multer.diskStorage({
     destination: path.join(__dirname, 'public/uploads'),
     limits: {
-        fileSize: 2000000
+        fileSize: 20000000
     },
     filename: (req, file, cb) => {
         cb(null, new Date().getTime() + path.extname(file.originalname));
